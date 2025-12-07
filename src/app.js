@@ -11,17 +11,19 @@ app.use(logger());
 const allowedOrigins = env.CORS_ORIGIN.split(",")
   .map((s) => s.trim())
   .filter(Boolean);
-const allowCreds = !allowedOrigins.includes("*");
 app.use(
   cors({
     origin: (ctx) => {
       const reqOrigin = ctx.get("Origin");
-      if (!reqOrigin) return allowCreds ? allowedOrigins[0] || "" : "*";
-      if (allowedOrigins.includes("*")) return "*";
+      if (allowedOrigins.includes("*")) return reqOrigin || "*";
+      if (!reqOrigin) return allowedOrigins[0] || "";
       if (allowedOrigins.includes(reqOrigin)) return reqOrigin;
       return allowedOrigins[0] || reqOrigin;
     },
-    credentials: allowCreds,
+    credentials: (ctx) => {
+      const reqOrigin = ctx.get("Origin");
+      return !!reqOrigin;
+    },
     allowMethods: ["GET", "HEAD", "PUT", "POST", "DELETE", "OPTIONS"],
     allowHeaders: [
       "Content-Type",

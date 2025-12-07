@@ -6,7 +6,7 @@ module.exports = (req, res) => {
     .map((s) => s.trim())
     .filter(Boolean);
   const reqOrigin = req.headers.origin;
-  let originHeader = "*";
+  let originHeader = reqOrigin || "*";
   if (!allowedOrigins.includes("*")) {
     if (reqOrigin && allowedOrigins.includes(reqOrigin))
       originHeader = reqOrigin;
@@ -15,15 +15,19 @@ module.exports = (req, res) => {
 
   if (req.method === "OPTIONS") {
     res.setHeader("Access-Control-Allow-Origin", originHeader);
+    res.setHeader("Vary", "Origin");
     res.setHeader(
       "Access-Control-Allow-Methods",
       "GET,HEAD,PUT,POST,DELETE,OPTIONS"
     );
+    const reqHeaders = req.headers["access-control-request-headers"];
     res.setHeader(
       "Access-Control-Allow-Headers",
-      "Content-Type,Authorization,X-Requested-With,Accept,Origin"
+      reqHeaders || "Content-Type,Authorization,X-Requested-With,Accept,Origin"
     );
     res.setHeader("Access-Control-Max-Age", "600");
+    if (originHeader !== "*")
+      res.setHeader("Access-Control-Allow-Credentials", "true");
     res.statusCode = 204;
     res.end();
     return;
@@ -37,5 +41,9 @@ module.exports = (req, res) => {
     req.url = prefix + path + qs;
   }
 
+  res.setHeader("Access-Control-Allow-Origin", originHeader);
+  res.setHeader("Vary", "Origin");
+  if (originHeader !== "*")
+    res.setHeader("Access-Control-Allow-Credentials", "true");
   return app.callback()(req, res);
 };
