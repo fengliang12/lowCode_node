@@ -21,6 +21,7 @@ const env = cleanEnv(process.env, {
     default:
       "localhost,127.0.0.1,amazonaws.com,s3.amazonaws.com,s3.us-east-1.amazonaws.com,api.weixin.qq.com,supabase.com,pooler.supabase.com",
   }),
+  CORS_ORIGIN: str({ default: "*" }),
   WX_APP_ID: str({ default: "" }),
   WX_APP_SECRET: str({ default: "" }),
 });
