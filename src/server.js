@@ -1,7 +1,4 @@
-const Koa = require("koa");
-const bodyParser = require("koa-bodyparser");
-const cors = require("@koa/cors");
-const logger = require("koa-logger");
+const app = require("./app");
 
 const { env, isDbEnabled } = require("./config");
 if (env.HTTPS_PROXY && !process.env.VERCEL) {
@@ -10,18 +7,6 @@ if (env.HTTPS_PROXY && !process.env.VERCEL) {
   require("global-agent").bootstrap();
 }
 const { ensureSchema } = require("./db/schema");
-const routes = require("./routes");
-const db = require("./db");
-
-const app = new Koa();
-
-app.use(logger());
-app.use(cors());
-app.use(bodyParser());
-app.use(require("./middlewares/error"));
-
-app.use(routes.routes());
-app.use(routes.allowedMethods());
 
 (async () => {
   if (isDbEnabled) {
