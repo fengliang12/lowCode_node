@@ -1,3 +1,25 @@
 {
-  "version": 2
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/pageSetup/:path*",
+      "destination": "/api/pageSetup/:path*"
+    },
+    {
+      "source": "/pageSetupApi/:path*",
+      "destination": "/api/pageSetupApi/:path*"
+    },
+    {
+      "source": "/mini/:path*",
+      "destination": "/api/mini/:path*"
+    },
+    {
+      "source": "/uploadFile",
+      "destination": "/api/uploadFile"
+    },
+    {
+      "source": "/health",
+      "destination": "/api/health"
+    }
+  ]
 }
